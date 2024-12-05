@@ -10,7 +10,7 @@ app.secret_key = "your_secret_key"
 db_config = {
     'host': 'localhost',  # Change this to your MySQL host
     'user': 'root',  # Change this to your MySQL username
-    'password': 'conan1412',  # Change this to your MySQL password
+    'password': 'yourpassword',  # Change this to your MySQL password
     'database': 'hw3'  # Change this to your MySQL database name
 }
 
@@ -27,7 +27,7 @@ def login():
 
         # TODO # 4: Hash the password using SHA-256
         password = hashlib.sha256(password.encode()).hexdigest()
-
+        
         # Connect to the database
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -40,11 +40,11 @@ def login():
             # Close the connection
             cursor.close()
             conn.close()
-
             # if pass the check, redirect to the welcome page and store the username in the session
             session['username'] = username
             return redirect("/welcome") # commit this line after completing TODO # 2
-        
+        else:
+            flash(f"Error: wrong username or password", "danger")
     return render_template("login.html")
 
 # Welcome Page
@@ -80,7 +80,7 @@ def signup():
             cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
             conn.commit()
             
-            flash("Account created successfully! Please log in.", "success")
+            flash(f"Account created successfully! Please log in.", "success")
             return redirect("/")
         except mysql.connector.Error as err:
             flash(f"Error: {err}", "danger")
